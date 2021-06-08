@@ -607,6 +607,17 @@ export default class EfficientGraph<TEdgeType: number = 1> {
     this.edges[index + NEXT_IN] = 0;
     this.edges[index + NEXT_OUT] = 0;
 
+    // Shift next edges down to fill in the gap
+    let nextIndex = index + EDGE_SIZE;
+    while (this.edges[nextIndex + TYPE]) {
+      this.edges[index + TYPE] = this.edges[nextIndex + TYPE];
+      this.edges[index + FROM] = this.edges[nextIndex + FROM];
+      this.edges[index + TO] = this.edges[nextIndex + TO];
+      this.edges[index + NEXT_IN] = this.edges[nextIndex + NEXT_IN];
+      this.edges[index + NEXT_OUT] = this.edges[nextIndex + NEXT_OUT];
+      nextIndex += EDGE_SIZE;
+    }
+
     this.numEdges--;
   }
 
