@@ -1,28 +1,22 @@
 import {Transformer} from '@parcel/plugin';
+import * as compiler from 'vue-template-compiler';
+import * as componentCompilerUtils from '@vue/component-compiler-utils';
 
 export default new Transformer({
-  async canReuseAST({ast, options, logger}) {
-    return false;
-  },
-
-  async loadConfig({config, options, logger}) {
-    // ...
-    return config;
-  },
-
   async parse({asset, config, logger, resolve, options}) {
-    console.log('This is loaded');
-    // ...
-    return {};
+    let code = await asset.getCode();
+    return componentCompilerUtils.parse({
+      source: code,
+      needMap: true,
+      filename: asset.filePath,
+      sourceRoot: '', // Used for sourcemaps. Override so it doesn't use cwd
+      compiler: compiler,
+    });
   },
 
   async transform({asset, config, logger, resolve, options}) {
-    // ...
-    return [asset];
-  },
+    console.log(await asset.getAST());
 
-  async generate({asset, ast, resolve, options}) {
-    // ...
-    return {code, map};
+    return [asset];
   },
 });
